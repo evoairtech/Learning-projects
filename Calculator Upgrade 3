@@ -1,0 +1,319 @@
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+        self.prev = None
+ 
+ 
+# first we check that the given node as a parameter is not None
+# new_node is the new node we're creating with the data that we're feeding it
+# new_node.prev is the link between the new_node and the node before it
+# new_node.next is the link between the new_node and the node after it
+def insert_after_node(node, data):
+    if node is None:
+        print('Error: The given node is None')
+        return
+ 
+    new_node = Node(data)
+    new_node.prev = node
+    new_node.next = node.next
+ 
+    # check if the node we're giving as a parameter has a node after it
+    # if it does have a node after it, then we link that node with the new node we created
+    if node.next:
+        node.next.prev = new_node
+ 
+# we make the next node for the node that we gave as a parameter, the new node that we created
+    node.next = new_node
+ 
+ 
+# head_node is the first node of the math problem
+# current_node is the node we're currently working with
+# iterate over the nodes and print them
+# after every iteration the current node is set to the next node
+# end='<=> makes sure that the next print stays on the same line
+# after the loop is finished print 'None' to show the end of the doubly linked list
+def display(head_node):
+    current_node = head_node
+    while current_node:
+        print(current_node.data, end='<=>')
+        current_node = current_node.next
+    print('None')
+ 
+ 
+# checks if the string is a number and also int or float
+def digit_check(element):
+    sign = '+'
+    if type(element) is int:
+        return element
+    elif type(element) is float:
+        return element
+ 
+    if element[0] == '-':
+        sign = '-'
+        non_negative_element = element[1:]
+        element = non_negative_element
+    elif element[0] == '+':
+        non_negative_element = element[1:]
+        element = non_negative_element
+ 
+    if str(element).isdigit():
+        digit_result = int(element)
+    elif '.' in str(element):
+        digit_result = float(element)
+    else:
+        return None
+ 
+    if sign == '-':
+        digit_result = -digit_result
+ 
+    return digit_result
+ 
+ 
+# function to perform the different operations
+def perform_action(num1, num2, action):
+    if action == '+':
+        return num1 + num2
+    elif action == '-':
+        return num1 - num2
+    elif action == '*':
+        return num1 * num2
+    elif action == '/':
+        if num2 != 0:
+            return num1 / num2
+        else:
+            return 'Division by zero is not allowed'
+ 
+ 
+# we start with head_node and current_node set to None, because they don't have a value yet
+# we're going to use current_number to create the new nodes so it is an empty string (that is used to also keep track
+# of the multi-digit numbers
+def create_linked_list_from_math_problem(math_problem, actions):
+    # at the beginning there is no head_node
+    head_node = None
+    # at the beginning there is no node in use
+    current_node = None
+    # chars are gathers here. If char is a number then they are concatenated until an action appears ->
+    # -> and then a new node is created. If the char is an action then a new node is created immediately
+    current_number = ''
+    i = 0
+ 
+    while i < len(math_problem):
+        char = math_problem[i]
+        i += 1
+        # handling parenthesis
+        # checks if there is a parenthesis and a variable controls the count of the open and close parenthesis
+        # after all parenthesis are  closed if creates a sub expression based on what is in the parenthesis
+        # if there are nested parenthesis this process is completed over and over by a recursive calling of the function
+        if char == '(':
+            sub_expression = ''
+            balance = 1
+            char_count_in_parenthesis = 0
+            for char in math_problem[i:]:
+                i += 1
+                if char == ')':
+                    balance -= 1
+                if balance > 0:
+                    sub_expression += char              
+                if char == '(':
+                    balance += 1
+                if sub_expression is not "" and char not in '()':
+                    char_count_in_parenthesis += 1
+                if balance == 0 and sub_expression is not '':
+                    break
+ 
+ 
+            sub_node = create_linked_list_from_math_problem(sub_expression, actions)
+            print(sub_node)
+            new_node = Node(sub_node)
+            print(new_node.data)
+            if not head_node:
+                head_node = new_node
+                current_node = head_node
+            else:
+                insert_after_node(current_node, new_node)
+                current_node = current_node.next
+        # check if char is in the actions
+        elif char in actions:
+            if not head_node and not current_node and current_number == '':
+                current_number += char
+            else:
+                # if the char is in actions check if there is a currently accumulated number
+                if current_number:
+                    # if there is a currently accumulated number create a new node from it
+                    new_node = Node(current_number)
+                    print(new_node.data)
+                    # check if head_node is None. If head_node is None, set head_node to new_node and then set ->
+                    # -> the currently in use node to the head node
+                    if not head_node:
+                        head_node = new_node
+                        current_node = head_node
+                    # if there is a head node already, then insert the new node after the current node in use
+                    # set current_node to the next node
+                    else:
+                        insert_after_node(current_node, current_number)
+                        current_node = current_node.next
+                    # set current_number to be an empty string again in order to accumulate new numbers
+                    current_number = ''
+                # creating a new node for the char if the char is an action (operation)
+                # instead of for the current_number
+                if current_node.data in actions:
+                    current_number += char
+ 
+                else:
+                    new_node = Node(char)
+                    print(new_node.data)
+                    # doing the same checks as above for the lack of a node (this means a node == None)
+                    if not head_node:
+                        head_node = new_node
+                        current_node = head_node
+                    # same sets as above, but for the char instead of the current_number
+                    else:
+                        insert_after_node(current_node, char)
+                        current_node = current_node.next
+        else:
+            # if the character is not in actions it is appended/concatenated to the current_number
+            # this makes sure that multi-digit numbers are correctly acquired
+            current_number += char
+ 
+    if current_number:
+        new_node = Node(current_number)
+        if not head_node:
+            head_node = new_node
+        else:
+            insert_after_node(current_node, current_number)
+ 
+    # returns the full mathematical expression/problem
+    return head_node
+ 
+ 
+# this makes turns the doubly linked list into a list of separate elements
+# takes the head_node as a parameter
+# makes sure to go over multiplication and division before addition and subtraction
+def evaluate_math_problem(head_node):
+    # list of the separate elements
+    elements = []
+    print(elements)
+    # set the current_node to be in use as the head_node
+    current_node = head_node
+    # iterates over the nodes and appends every separate one of them to the list of elements
+    while current_node:
+        if isinstance(current_node.data, Node):
+            result = evaluate_math_problem(current_node.data)
+            elements.append(result)
+        else:
+            elements.append(current_node.data)
+        current_node = current_node.next
+ 
+    # this is the index of the element in the list
+    i = 0
+    # loop over all the elements in the list while the index is less than the length of the list
+    while i < len(elements):
+        # if an element is * or / then we set num1 to be the previous element, num2 to be the next element and ->
+        # -> the action to be the element
+        if elements[i] == "*" or elements[i] == "/":
+            num1 = digit_check(elements[i - 1])
+            num2 = digit_check(elements[i + 1])
+            # check if num2 equals zero, and if so print and Error
+            if num2 == 0 or num2 == "0":
+                print('Error: Division by zero not permitted')
+            # else print the result by using the perform_action function by feeding it the three parameters
+            else:
+                result = perform_action(num1, num2, elements[i])
+            # set the previous element to equal the result
+            elements[i - 1] = result
+            # then delete the element and the element after that
+            del elements[i:i + 2]
+            # go back one position/element to re-evaluate the current position
+            i -= 1
+        # move to the next position/element
+        else:
+            i += 1
+ 
+    i = 0
+    # loop over all the elements in the list while the index is less than the length of the list
+    while i < len(elements):
+        # if an element is * or / then we set num1 to be the previous element, num2 to be the next element and ->
+        # -> the action to be the element
+        if elements[i] == "+" or elements[i] == "-":
+            num1 = digit_check(elements[i - 1])
+            num2 = digit_check(elements[i + 1])
+            result = perform_action(num1, num2, elements[i])
+            # set the previous element to equal the result
+            elements[i - 1] = result
+            # then delete the element and the element after that
+            del elements[i:i + 2]
+            # go back one position/element to re-evaluate the current position
+            i -= 1
+        # move to the next position/element
+        else:
+            i += 1
+ 
+    # checks if the final result has numbers different from 0 after the decimal point and based on that
+    # it returns the final result as an int or a float
+    if (elements[0] % 1) == 0:
+        return int(elements[0])
+    else:
+        return float(elements[0])
+ 
+ 
+# this function executes the mathematical equation
+def main():
+    print('Calculator operations and actions:\nOperations: +, -, *, / \nActions: "q" or quit to quit the program /'
+              '\"hr\" to print result history / \"hmp\" to print math problems history')
+    results_history = []
+    math_problem_history = []
+    while True:
+        actions = ['+', '-', '*', '/', 'q']
+        math_problem = input('\nPlease enter your mathematical problem: ')
+        math_problem_history.append(str(math_problem))
+        math_problem_lower = math_problem.lower()
+        if math_problem_lower == "q" or math_problem_lower == 'quit':
+            print('Quitting...')
+            return
+        elif math_problem_lower == 'hr':
+            math_problem_history.pop()
+            print(results_history)
+            continue
+        elif math_problem_lower == 'hmp':
+            math_problem_history.pop()
+            print(math_problem_history)
+            continue
+        elif math_problem_lower == 'c':
+            math_problem_history.pop()
+            print('All history cleared')
+            continue
+ 
+        valid_action = False
+        for char in math_problem:
+            if char in actions or char in "()":
+                valid_action = True
+                break
+ 
+        if not valid_action:
+            math_problem = input('Please enter a valid mathematical problem: ')
+            continue
+ 
+    # Друг вариант за проверка за наличие на валидна операция
+    #    for action in actions:
+    #        if action in math_problem:
+    #            valid_action = True
+    #            break
+    #    if not valid_action:
+    #            print('Please enter a math problem with a valid action')
+    #            return
+ 
+        math_problem_concatenated = math_problem.replace(' ', '')
+ 
+        head_node = create_linked_list_from_math_problem(math_problem_concatenated, actions)
+        print('Doubly linked list: ')
+        display(head_node)
+ 
+        result = evaluate_math_problem(head_node)
+        print('Result:', result)
+ 
+        results_history.append(str(result))
+ 
+ 
+if __name__ == '__main__':
+    main()
