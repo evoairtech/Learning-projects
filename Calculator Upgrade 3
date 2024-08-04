@@ -266,6 +266,16 @@ def main():
     while True:
         actions = ['+', '-', '*', '/', 'q']
         math_problem = input('\nPlease enter your mathematical problem: ')
+        balance = 0
+        for char in math_problem:
+            if char == '(':
+                balance += 1
+            elif char == ')':
+                balance -= 1
+                
+        if balance != 0:
+            math_problem = input('Please enter a math problem with correct amount of parenthesis: ')
+
         math_problem_history.append(str(math_problem))
         math_problem_lower = math_problem.lower()
         if math_problem_lower == "q" or math_problem_lower == 'quit':
