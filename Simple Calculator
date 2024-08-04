@@ -1,0 +1,64 @@
+num1 = input('Enter number 1 ')
+action = input('Enter desired action (+, -, *, /) ')
+num2 = input('Enter number 2 ')
+
+
+# checks if variables are numbers
+def digit_check(input_string):
+    if input_string.isdigit():
+        return int(input_string)
+    elif '.' in input_string:
+        return float(input_string)
+    else:
+        print('This is not a number')
+        return None
+
+
+num1 = digit_check(num1)
+num2 = digit_check(num2)
+
+
+# functions for actions
+def add():
+    return num1 + num2
+
+
+def subtract():
+    return num1 - num2
+
+
+def multiply():
+    return num1 * num2
+
+
+def divide():
+    if isinstance(num1, int) and isinstance(num2, int):
+        return num1 // num2
+    else:
+        return num1 / num2
+
+
+# condition for action to be taken
+def perform_action():
+    if action == "+":
+        result = add()
+    elif action == "-":
+        result = subtract()
+    elif action == "*":
+        result = multiply()
+    elif action == "/":
+        if num2 != 0:
+            result = divide()
+        else:
+            result = 'Division by 0 not possible'
+    else:
+        result = 'Incorrect action'
+
+    if isinstance(result, float):
+        return f'{result:.2f}'
+    else:
+        return result
+
+
+result_message = perform_action()
+print(result_message)
