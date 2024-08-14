@@ -1,0 +1,67 @@
+morse_code_dictionary = {}
+
+with open('morse_code.txt', 'r') as file:
+    for line in file:
+        key, value = line.strip().split(':', 1)
+        morse_code_dictionary[key.strip()] = value.strip()
+
+print(morse_code_dictionary)
+
+
+
+"""
+def spacing_rules(spaces_var, deciphered_message, symbols):
+    if len(spaces_var) == 1:
+        for key, value in morse_code_dictionary.items():
+            if value == symbols:
+                deciphered_message += key
+                break
+    elif len(spaces_var) == 3:
+        for key, value in morse_code_dictionary.items():
+            if value == symbols:
+                deciphered_message += key
+                deciphered_message += ' '
+                break
+"""
+
+
+def code_decipher(morse_message):
+    symbols = ''
+    spaces = ''
+    deciphered_message = ''
+    for symbol in morse_message:
+        if symbol in '.-':
+            symbols += symbol
+        elif symbol == ' ':
+            spaces += ' '
+ #           spacing_rules(spaces, deciphered_message, symbols)
+            if len(spaces) == 1:
+                for key, value in morse_code_dictionary.items():
+                    if value == symbols:
+                        deciphered_message += key
+                        break
+            elif len(spaces) == 3:
+                for key, value in morse_code_dictionary.items():
+                    if value == symbols:
+                        deciphered_message += key
+                        deciphered_message += ' '
+                        break
+            symbols = ''
+            spaces = ''
+        else:
+            print(f'Skipping incorrect symbol: {symbol} and continuing forward')
+            continue
+
+    return deciphered_message
+
+
+def main():
+    morse_message = input('Please input a morse code to decipher: ')
+
+    result = code_decipher(morse_message)
+    print(result)
+
+
+if __name__ == '__main__':
+    main()
+
