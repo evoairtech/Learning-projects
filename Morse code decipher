@@ -1,3 +1,6 @@
+from operator import length_hint
+
+
 morse_code_dictionary = {}
 
 with open('morse_code.txt', 'r') as file:
@@ -29,11 +32,19 @@ def code_decipher(morse_message):
     symbols = ''
     spaces = ''
     deciphered_message = ''
-    for symbol in morse_message:
+    for index, symbol in enumerate(morse_message):
         if symbol in '.-':
             symbols += symbol
+            spaces = ''
+            if index == len(morse_message) - 1:
+                for key, value in morse_code_dictionary.items():
+                    if value == symbols:
+                        deciphered_message += key
+                        break                
         elif symbol == ' ':
             spaces += ' '
+            if symbols == '' and len(spaces) < 3:
+                continue            
  #           spacing_rules(spaces, deciphered_message, symbols)
             if len(spaces) == 1:
                 for key, value in morse_code_dictionary.items():
@@ -41,13 +52,11 @@ def code_decipher(morse_message):
                         deciphered_message += key
                         break
             elif len(spaces) == 3:
-                for key, value in morse_code_dictionary.items():
-                    if value == symbols:
-                        deciphered_message += key
-                        deciphered_message += ' '
-                        break
+                deciphered_message += ' '
+
+            
             symbols = ''
-            spaces = ''
+
         else:
             print(f'Skipping incorrect symbol: {symbol} and continuing forward')
             continue
@@ -59,7 +68,7 @@ def main():
     morse_message = input('Please input a morse code to decipher: ')
 
     result = code_decipher(morse_message)
-    print(result)
+    print('Deciphered code is: ', result)
 
 
 if __name__ == '__main__':
