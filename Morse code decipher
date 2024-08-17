@@ -1,17 +1,3 @@
-from operator import length_hint
-
-
-morse_code_dictionary = {}
-
-with open('morse_code.txt', 'r') as file:
-    for line in file:
-        key, value = line.strip().split(':', 1)
-        morse_code_dictionary[key.strip()] = value.strip()
-
-print(morse_code_dictionary)
-
-
-
 """
 def spacing_rules(spaces_var, deciphered_message, symbols):
     if len(spaces_var) == 1:
@@ -27,6 +13,8 @@ def spacing_rules(spaces_var, deciphered_message, symbols):
                 break
 """
 
+morse_code_dictionary = {}
+
 
 def code_decipher(morse_message):
     symbols = ''
@@ -40,12 +28,12 @@ def code_decipher(morse_message):
                 for key, value in morse_code_dictionary.items():
                     if value == symbols:
                         deciphered_message += key
-                        break                
+                        break
         elif symbol == ' ':
             spaces += ' '
             if symbols == '' and len(spaces) < 3:
-                continue            
- #           spacing_rules(spaces, deciphered_message, symbols)
+                continue
+                #           spacing_rules(spaces, deciphered_message, symbols)
             if len(spaces) == 1:
                 for key, value in morse_code_dictionary.items():
                     if value == symbols:
@@ -54,7 +42,6 @@ def code_decipher(morse_message):
             elif len(spaces) == 3:
                 deciphered_message += ' '
 
-            
             symbols = ''
 
         else:
@@ -65,12 +52,32 @@ def code_decipher(morse_message):
 
 
 def main():
+    with open('morse_code-to-eng.txt', 'r') as file:
+        for line in file:
+            key, value = line.strip().split(':', 1)
+            morse_code_dictionary[key.strip()] = value.strip()
+
+        print(morse_code_dictionary)
+
     morse_message = input('Please input a morse code to decipher: ')
 
     result = code_decipher(morse_message)
     print('Deciphered code is: ', result)
 
+    with open('empty-file-write.txt', 'w') as file:
+        file.write(f'{result}')
+
+    with open('empty-file-append.txt', 'a') as file:
+        file.write(f'\n{result}')
+
+    with open('empty-file-write.txt', 'r') as file:
+        file_info_1 = file.read()
+        print('override text: ', file_info_1)
+
+    with open('empty-file-append.txt', 'r') as file:
+        file_info_2 = file.read()
+        print('appended text: ', file_info_2)
+
 
 if __name__ == '__main__':
     main()
-
