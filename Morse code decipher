@@ -86,7 +86,8 @@ def main():
         
     # reading morse code from a file (the file is already in the project folder)
     elif choice_low == 'file':
-        with open('morse_code_text_5.txt', 'r') as file:
+        file_to_open = input('Please write out the name of the file that you want to be deciphered: ')
+        with open(file_to_open, 'r') as file:
             morse_message = file.read()
 
         result = code_decipher(morse_message)
