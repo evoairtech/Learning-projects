@@ -75,29 +75,39 @@ def main():
         print(morse_code_dictionary)
 
 
-# reading morse code from an input
-#    morse_message = input('Please input a morse code to decipher: ')
+    choice = input('Direct - for direct input or File - for file name input: ')
+    choice_low = choice.lower()
+    
+    # reading morse code from an input
+    if choice_low == 'direct':
+        morse_message = input('Please input a morse code to decipher: ')
+        result = code_decipher(morse_message)
+        print('Deciphered code is: ', result)
+        
+    # reading morse code from a file (the file is already in the project folder)
+    elif choice_low == 'file':
+        with open('morse_code_text_5.txt', 'r') as file:
+            morse_message = file.read()
 
-# reading morse code from a file (the file is already in the project folder
-    with open('morse_code_text_5.txt', 'r') as file:
-        morse_message = file.read()
+        result = code_decipher(morse_message)
+        print('Deciphered code is: ', result)
 
-    result = code_decipher(morse_message)
-    print('Deciphered code is: ', result)
+        with open('empty-file-write.txt', 'w') as file:
+            file.write(f'{result}')
 
-    with open('empty-file-write.txt', 'w') as file:
-        file.write(f'{result}')
+        with open('empty-file-append.txt', 'a') as file:
+            file.write(f'\n{result}')
 
-    with open('empty-file-append.txt', 'a') as file:
-        file.write(f'\n{result}')
+        with open('empty-file-write.txt', 'r') as file:
+            file_info_1 = file.read()
+            print('override text: ', file_info_1)
 
-    with open('empty-file-write.txt', 'r') as file:
-        file_info_1 = file.read()
-        print('override text: ', file_info_1)
+        with open('empty-file-append.txt', 'r') as file:
+            file_info_2 = file.read()
+            print('appended text: ', file_info_2)
+    else:
+        print('Wrong option chosen')
 
-    with open('empty-file-append.txt', 'r') as file:
-        file_info_2 = file.read()
-        print('appended text: ', file_info_2)
 
 if __name__ == '__main__':
     main()
