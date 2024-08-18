@@ -13,6 +13,21 @@ def spacing_rules(spaces_var, deciphered_message, symbols):
                 break
 """
 
+"""
+def spacing_rules(spaces_var, deciphered_message, symbols):
+    if len(spaces_var) == 1:
+        for key, value in morse_code_dictionary.items():
+            if value == symbols:
+                deciphered_message += key
+                break
+    elif len(spaces_var) == 3:
+        for key, value in morse_code_dictionary.items():
+            if value == symbols:
+                deciphered_message += key
+                deciphered_message += ' '
+                break
+"""
+
 morse_code_dictionary = {}
 
 
@@ -59,7 +74,13 @@ def main():
 
         print(morse_code_dictionary)
 
-    morse_message = input('Please input a morse code to decipher: ')
+
+# reading morse code from an input
+#    morse_message = input('Please input a morse code to decipher: ')
+
+# reading morse code from a file (the file is already in the project folder
+    with open('morse_code_text_5.txt', 'r') as file:
+        morse_message = file.read()
 
     result = code_decipher(morse_message)
     print('Deciphered code is: ', result)
@@ -77,7 +98,6 @@ def main():
     with open('empty-file-append.txt', 'r') as file:
         file_info_2 = file.read()
         print('appended text: ', file_info_2)
-
 
 if __name__ == '__main__':
     main()
