@@ -31,15 +31,15 @@ def spacing_rules(spaces_var, deciphered_message, symbols):
 morse_code_dictionary = {}
 
 
-def code_decipher(morse_message):
+def code_decipher(message):
     symbols = ''
     spaces = ''
     deciphered_message = ''
-    for index, symbol in enumerate(morse_message):
+    for index, symbol in enumerate(message):
         if symbol in '.-':
             symbols += symbol
             spaces = ''
-            if index == len(morse_message) - 1:
+            if index == len(message) - 1:
                 for key, value in morse_code_dictionary.items():
                     if value == symbols:
                         deciphered_message += key
@@ -66,46 +66,112 @@ def code_decipher(morse_message):
     return deciphered_message
 
 
+def code_encryptor(message):
+    upper_case_message = message.upper()
+    encrypted_message = ''
+
+    for symbol in upper_case_message:
+        if symbol in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?\'!/()&:;=+-_\"$@':
+            for key, value in morse_code_dictionary.items():
+                if value == symbol:
+                    encrypted_message += key
+                    encrypted_message += ' '
+        elif symbol == ' ' or symbol == '\n':
+            for key, value in morse_code_dictionary.items():
+                if value == symbol:
+                    encrypted_message += '   '
+        else:
+            print(f'Skipping incorrect symbol: {symbol} and continuing forward')
+            continue
+
+    return encrypted_message
+
+
 def main():
-    with open('morse_code-to-eng.txt', 'r') as file:
-        for line in file:
-            key, value = line.strip().split(':', 1)
-            morse_code_dictionary[key.strip()] = value.strip()
+    main_action = input('Encrypt or Decrypt: ')
+    main_action_lower = main_action.lower()
 
-        print(morse_code_dictionary)
+    # decrypting from morse code to english
+    if main_action_lower == 'decrypt':
+        with open('morse_code-to-eng.txt', 'r') as file:
+            for line in file:
+                key, value = line.strip().split(':', 1)
+                morse_code_dictionary[key.strip()] = value.strip()
 
+        choice = input('Direct - for direct input or File - for file name input: ')
+        choice_low = choice.lower()
 
-    choice = input('Direct - for direct input or File - for file name input: ')
-    choice_low = choice.lower()
-    
-    # reading morse code from an input
-    if choice_low == 'direct':
-        morse_message = input('Please input a morse code to decipher: ')
-        result = code_decipher(morse_message)
-        print('Deciphered code is: ', result)
-        
-    # reading morse code from a file (the file is already in the project folder)
-    elif choice_low == 'file':
-        file_to_open = input('Please write out the name of the file that you want to be deciphered: ')
-        with open(file_to_open, 'r') as file:
-            morse_message = file.read()
+        # reading morse code from an input
+        if choice_low == 'direct':
+            message = input('Please input a morse code to decipher: ')
+            result = code_decipher(message)
+            print('Deciphered code is: ', result)
 
-        result = code_decipher(morse_message)
-        print('Deciphered code is: ', result)
+        # reading morse code from a file (the file is already in the project folder)
+        elif choice_low == 'file':
+            file_to_open = input('Please write out the name of the file that you want to be deciphered: ')
+            with open(file_to_open, 'r') as file:
+                message = file.read()
 
-        with open('empty-file-write.txt', 'w') as file:
-            file.write(f'{result}')
+            result = code_decipher(message)
+            print('Deciphered code is: ', result)
 
-        with open('empty-file-append.txt', 'a') as file:
-            file.write(f'\n{result}')
+            with open('empty-file-write.txt', 'w') as file:
+                file.write(f'{result}')
 
-        with open('empty-file-write.txt', 'r') as file:
-            file_info_1 = file.read()
-            print('override text: ', file_info_1)
+            with open('empty-file-append.txt', 'a') as file:
+                file.write(f'\n{result}')
 
-        with open('empty-file-append.txt', 'r') as file:
-            file_info_2 = file.read()
-            print('appended text: ', file_info_2)
+            with open('empty-file-write.txt', 'r') as file:
+                file_info_1 = file.read()
+                print('override text: ', file_info_1)
+
+            with open('empty-file-append.txt', 'r') as file:
+                file_info_2 = file.read()
+                print('appended text: ', file_info_2)
+        else:
+            print('Wrong option chosen')
+
+    # encrypting from english to morse code
+    elif main_action_lower == 'encrypt':
+        with open('eng-to-morse_code.txt', 'r') as file:
+            for line in file:
+                key, value = line.strip().split(':', 1)
+                morse_code_dictionary[key.strip()] = value.strip()
+
+        choice = input('Direct - for direct input or File - for file name input: ')
+        choice_low = choice.lower()
+
+        # reading english from an input
+        if choice_low == 'direct':
+            message = input('Please input text in english to encrypt: ')
+            result = code_encryptor(message)
+            print('Encrypted code is: ', result)
+
+        # reading english from a file (the file is already in the project folder)
+        elif choice_low == 'file':
+            file_to_open = input('Please write out the name of the file that you want to be encrypted: ')
+            with open(file_to_open, 'r') as file:
+                message = file.read()
+
+            result = code_encryptor(message)
+            print('Encrypted text is: ', result)
+            
+            with open('empty-file-write.txt', 'w') as file:
+                file.write(f'{result}')
+
+            with open('empty-file-append.txt', 'a') as file:
+                file.write(f'\n{result}')
+
+            with open('empty-file-write.txt', 'r') as file:
+                file_info_1 = file.read()
+                print('override text: ', file_info_1)
+
+            with open('empty-file-append.txt', 'r') as file:
+                file_info_2 = file.read()
+                print('appended text: ', file_info_2)
+        else:
+            print('Wrong option chosen')
     else:
         print('Wrong option chosen')
 
